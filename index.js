@@ -3,6 +3,7 @@ const port = 8000;
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const db = require("./config/mongoose");
+const Contact = require("./schema/contact");
 const app = express();
 
 app.use(cors());
@@ -38,11 +39,13 @@ app.get("/fetch-contacts", (req, res) => {
 app.post("/new-contact", (req, res) => {
   console.log("DATA:", req.body);
   if (req.body) {
-    contacts.push(req.body);
-    return res.json({
-      status: "success",
-      message: "New Contact Added",
-      name: req.body.name,
+    Contact.create(req.body, (err, newContact) => {
+      if (err) {
+        console.log("Error in creating new Contact!");
+        return res.json({ message: "Failure", details: err });
+      }
+      console.log("NEW CONTACT:", newContact);
+      return res.json({ status: "Success", details: newContact });
     });
   } else {
     return res.json({

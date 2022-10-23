@@ -2,6 +2,7 @@ const express = require("express");
 const port = 8000;
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const db = require("./config/mongoose");
 const app = express();
 
 app.use(cors());

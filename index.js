@@ -33,7 +33,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/fetch-contacts", (req, res) => {
-  return res.json({ message: "List of contacts", contacts });
+  Contact.find({}, function (err, contacts) {
+    if (err) {
+      console.log("Error Finding Contacts from db! ERROR:", err);
+      return res.json({ status: "Failure..", msg: err });
+    }
+    return res.json({ message: "Contacts Fetched!", contacts });
+  });
 });
 
 app.post("/new-contact", (req, res) => {

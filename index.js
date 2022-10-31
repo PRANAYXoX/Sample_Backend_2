@@ -9,6 +9,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use("/", require("./routes/index"));
 
 var contacts = [
   {
@@ -28,20 +29,6 @@ var contacts = [
   },
 ];
 
-app.get("/", (req, res) => {
-  return res.json({ msg: "This is CORS-enabled for all origins!" });
-});
-
-app.get("/fetch-contacts", (req, res) => {
-  Contact.find({}, function (err, contacts) {
-    if (err) {
-      console.log("Error Finding Contacts from db! ERROR:", err);
-      return res.json({ status: "Failure..", msg: err });
-    }
-    return res.json({ message: "Contacts Fetched!", contacts });
-  });
-});
-
 app.post("/new-contact", (req, res) => {
   console.log("DATA:", req.body);
   if (req.body) {
@@ -57,6 +44,20 @@ app.post("/new-contact", (req, res) => {
     return res.json({
       status: "Failure!",
       message: "Adding nerw contact failed!",
+    });
+  }
+});
+
+app.post("/delete-contact", (req, res) => {
+  const id = req.body.id;
+  console.log("ID", id);
+  if (id) {
+    Contact.findByIdAndDelete(id, function (err, details) {
+      if (err) {
+        console.log("Error:", err);
+        return res.json({ status: "Failure!", error: err });
+      }
+      return res.json({ status: "Success!", message: details });
     });
   }
 });
